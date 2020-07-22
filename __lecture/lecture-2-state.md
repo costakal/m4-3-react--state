@@ -89,7 +89,9 @@ const Name = () => {
         type="text"
         value={name}
         onChange={(ev) => {
-          setName(ev.target.value);
+          if (ev.key === "Enter") {
+            setName(Hello);
+          }
         }}
         style={{ fontSize: 32 }}
       />
