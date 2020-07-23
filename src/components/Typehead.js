@@ -39,7 +39,9 @@ const Typeahead = ({ suggestions, handleSelect }) => {
             <SugItem
               key={suggestion.id}
               style={{
-                background: isSelected ? "red" : "transparent",
+                background: isSelected
+                  ? "hsla(50deg, 100%, 80%, 0.25"
+                  : "transparent",
               }}
               onClick={() => handleSelect(suggestion.title)}
             >
