@@ -2,25 +2,44 @@ import React from "react";
 import styled from "styled-components";
 
 const Typeahead = ({ suggestions, handleSelect }) => {
-  const [value, setValue] = React.useState();
+  const [value, setValue] = React.useState("");
+
   const clearValue = () => {
     setValue("");
+  };
+
+  const getMapppedSuggestions = () => {
+    if (value !== "" && value.length >= 2) {
+      const mappedSuggestions = suggestions.map((suggestion) => {
+        if (suggestion.title.toLowerCase().includes(value.toLowerCase())) {
+          return (
+            <SugItem
+              key={suggestion.id}
+              onClick={() => handleSelect(suggestion.title)}
+            >
+              {suggestion.title}
+            </SugItem>
+          );
+        }
+      });
+      return mappedSuggestions;
+    }
   };
 
   return (
     <Wrapper>
       <input
         type="text"
-        value={value}
+        value={value || ""}
         onChange={(ev) => {
           setValue(ev.target.value);
-          // function that sets another hook (list of book titles that includes search term which is === value ***.includes())
         }}
         onKeyDown={(ev) => {
           if (ev.key === "Enter") handleSelect(value);
         }}
       />
       <button onClick={clearValue}>Clear</button>
+      <SugList>{getMapppedSuggestions()}</SugList>
     </Wrapper>
   );
 };
@@ -41,6 +60,24 @@ const Wrapper = styled.div`
     font-size: 16px;
     margin: 4px 2px;
     border-radius: 15px;
+  }
+`;
+
+const SugList = styled.ul`
+  box-shadow: 1px 10px 26px -8px rgba(0, 0, 0, 0.75);
+  border-radius: 7px;
+  width: 385px;
+`;
+
+const SugItem = styled.li`
+  margin: 10px;
+  padding: 10px;
+  display: flex;
+
+  &:hover {
+    background-color: #4caf50;
+    color: white;
+    border-radius: 7px;
   }
 `;
 

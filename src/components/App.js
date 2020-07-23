@@ -10,7 +10,7 @@ const App = ({ data }) => {
       <GlobalStyles />
       <Wrapper>
         <Typeahead
-          suggestions={data.books}
+          suggestions={data}
           handleSelect={(suggestion) => {
             window.alert(suggestion);
           }}
