@@ -3,27 +3,44 @@ import styled from "styled-components";
 
 const Typeahead = ({ suggestions, handleSelect }) => {
   const [value, setValue] = React.useState("");
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = React.useState(
+    0
+  );
+  //const [mappedSuggestions, setMappedSuggestions] = React.useState([]);
 
   const clearValue = () => {
     setValue("");
+    setSelectedSuggestionIndex(0);
   };
-
+  let mappedSuggestions = [];
   const getMapppedSuggestions = () => {
     if (value !== "" && value.length >= 2) {
-      const mappedSuggestions = suggestions
+      mappedSuggestions = suggestions
         .filter((suggestion) =>
           suggestion.title.toLowerCase().includes(value.toLowerCase())
         )
-        .map((suggestion) => {
+        .map((suggestion, index) => {
           let bookTitle = suggestion.title;
           let firstHalf = bookTitle.slice(
             0,
             bookTitle.toLowerCase().indexOf(value) + value.length
           );
           let secondHalf = bookTitle.slice(firstHalf.length, bookTitle.length);
+
+          let isSelected = false;
+          if (selectedSuggestionIndex === index) {
+            isSelected = true;
+          }
+
+          console.log("index", index);
+          console.log("selected suggestion index", selectedSuggestionIndex);
+
           return (
             <SugItem
               key={suggestion.id}
+              style={{
+                background: isSelected ? "red" : "transparent",
+              }}
               onClick={() => handleSelect(suggestion.title)}
             >
               <span>
@@ -48,7 +65,24 @@ const Typeahead = ({ suggestions, handleSelect }) => {
           setValue(ev.target.value);
         }}
         onKeyDown={(ev) => {
-          if (ev.key === "Enter") handleSelect(value);
+          switch (ev.key) {
+            case "Enter": {
+              handleSelect(mappedSuggestions[selectedSuggestionIndex].title);
+              return;
+            }
+            case "ArrowUp": {
+              if (selectedSuggestionIndex > 0) {
+                setSelectedSuggestionIndex(selectedSuggestionIndex - 1);
+              }
+              break;
+            }
+            case "ArrowDown": {
+              if (selectedSuggestionIndex < mappedSuggestions.length - 1) {
+                setSelectedSuggestionIndex(selectedSuggestionIndex + 1);
+              }
+              break;
+            }
+          }
         }}
       />
       <button onClick={clearValue}>Clear</button>
@@ -86,14 +120,14 @@ const SugItem = styled.li`
   margin: 10px;
   padding: 10px;
 
-  &:hover {
+  /* &:hover {
     background-color: #4caf50;
     color: white;
     border-radius: 7px;
     span {
       color: white;
     }
-  }
+  } */
 `;
 
 const CategoryId = styled.span`
