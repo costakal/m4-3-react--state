@@ -10,8 +10,11 @@ const Typeahead = ({ suggestions, handleSelect }) => {
 
   const getMapppedSuggestions = () => {
     if (value !== "" && value.length >= 2) {
-      const mappedSuggestions = suggestions.map((suggestion) => {
-        if (suggestion.title.toLowerCase().includes(value.toLowerCase())) {
+      const mappedSuggestions = suggestions
+        .filter((suggestion) =>
+          suggestion.title.toLowerCase().includes(value.toLowerCase())
+        )
+        .map((suggestion) => {
           return (
             <SugItem
               key={suggestion.id}
@@ -20,8 +23,7 @@ const Typeahead = ({ suggestions, handleSelect }) => {
               {suggestion.title}
             </SugItem>
           );
-        }
-      });
+        });
       return mappedSuggestions;
     }
   };
