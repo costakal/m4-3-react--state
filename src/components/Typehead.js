@@ -15,12 +15,23 @@ const Typeahead = ({ suggestions, handleSelect }) => {
           suggestion.title.toLowerCase().includes(value.toLowerCase())
         )
         .map((suggestion) => {
+          let bookTitle = suggestion.title;
+          let firstHalf = bookTitle.slice(
+            0,
+            bookTitle.toLowerCase().indexOf(value) + value.length
+          );
+          let secondHalf = bookTitle.slice(firstHalf.length, bookTitle.length);
           return (
             <SugItem
               key={suggestion.id}
               onClick={() => handleSelect(suggestion.title)}
             >
-              {suggestion.title}
+              <span>
+                {firstHalf}
+                <Prediction>{secondHalf}</Prediction>
+              </span>
+              <span> in </span>
+              <CategoryId>{suggestion.categoryId}</CategoryId>
             </SugItem>
           );
         });
@@ -74,13 +85,25 @@ const SugList = styled.ul`
 const SugItem = styled.li`
   margin: 10px;
   padding: 10px;
-  display: flex;
 
   &:hover {
     background-color: #4caf50;
     color: white;
     border-radius: 7px;
+    span {
+      color: white;
+    }
   }
+`;
+
+const CategoryId = styled.span`
+  padding: 5px 0px;
+  color: purple;
+  font-style: italic;
+`;
+
+const Prediction = styled.span`
+  font-weight: bold;
 `;
 
 export default Typeahead;
