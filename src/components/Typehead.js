@@ -32,9 +32,7 @@ const Typeahead = ({ suggestions, handleSelect }) => {
           <SugItem
             key={suggestion.id}
             style={{
-              background: isSelected
-                ? "hsla(50deg, 100%, 80%, 0.25"
-                : "transparent",
+              background: isSelected ? "#4caf50" : "transparent",
             }}
             onMouseEnter={() =>
               setSelectedSuggestionIndex(
