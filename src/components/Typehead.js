@@ -3,57 +3,55 @@ import styled from "styled-components";
 
 const Typeahead = ({ suggestions, handleSelect }) => {
   const [value, setValue] = React.useState("");
-  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = React.useState(
-    0
-  );
-  //const [mappedSuggestions, setMappedSuggestions] = React.useState([]);
+  let [selectedSuggestionIndex, setSelectedSuggestionIndex] = React.useState(0);
 
   const clearValue = () => {
     setValue("");
     setSelectedSuggestionIndex(0);
   };
-  let mappedSuggestions = [];
+
+  let filteredSuggestions = suggestions.filter((suggestion) =>
+    suggestion.title.toLowerCase().includes(value.toLowerCase())
+  );
+
   const getMapppedSuggestions = () => {
     if (value !== "" && value.length >= 2) {
-      mappedSuggestions = suggestions
-        .filter((suggestion) =>
-          suggestion.title.toLowerCase().includes(value.toLowerCase())
-        )
-        .map((suggestion, index) => {
-          let bookTitle = suggestion.title;
-          let firstHalf = bookTitle.slice(
-            0,
-            bookTitle.toLowerCase().indexOf(value) + value.length
-          );
-          let secondHalf = bookTitle.slice(firstHalf.length, bookTitle.length);
+      const mappedSuggestions = filteredSuggestions.map((suggestion, index) => {
+        let bookTitle = suggestion.title;
+        let firstHalf = bookTitle.slice(
+          0,
+          bookTitle.toLowerCase().indexOf(value) + value.length
+        );
+        let secondHalf = bookTitle.slice(firstHalf.length, bookTitle.length);
 
-          let isSelected = false;
-          if (selectedSuggestionIndex === index) {
-            isSelected = true;
-          }
-
-          console.log("index", index);
-          console.log("selected suggestion index", selectedSuggestionIndex);
-
-          return (
-            <SugItem
-              key={suggestion.id}
-              style={{
-                background: isSelected
-                  ? "hsla(50deg, 100%, 80%, 0.25"
-                  : "transparent",
-              }}
-              onClick={() => handleSelect(suggestion.title)}
-            >
-              <span>
-                {firstHalf}
-                <Prediction>{secondHalf}</Prediction>
-              </span>
-              <span> in </span>
-              <CategoryId>{suggestion.categoryId}</CategoryId>
-            </SugItem>
-          );
-        });
+        let isSelected = false;
+        if (selectedSuggestionIndex === index) {
+          isSelected = true;
+        }
+        return (
+          <SugItem
+            key={suggestion.id}
+            style={{
+              background: isSelected
+                ? "hsla(50deg, 100%, 80%, 0.25"
+                : "transparent",
+            }}
+            onMouseEnter={() =>
+              setSelectedSuggestionIndex(
+                () => (selectedSuggestionIndex = index)
+              )
+            }
+            onClick={() => handleSelect(suggestion.title)}
+          >
+            <span>
+              {firstHalf}
+              <Prediction>{secondHalf}</Prediction>
+            </span>
+            <span> in </span>
+            <CategoryId>{suggestion.categoryId}</CategoryId>
+          </SugItem>
+        );
+      });
       return mappedSuggestions;
     }
   };
@@ -69,7 +67,7 @@ const Typeahead = ({ suggestions, handleSelect }) => {
         onKeyDown={(ev) => {
           switch (ev.key) {
             case "Enter": {
-              handleSelect(mappedSuggestions[selectedSuggestionIndex].title);
+              handleSelect(filteredSuggestions[selectedSuggestionIndex].title);
               return;
             }
             case "ArrowUp": {
@@ -79,11 +77,12 @@ const Typeahead = ({ suggestions, handleSelect }) => {
               break;
             }
             case "ArrowDown": {
-              if (selectedSuggestionIndex < mappedSuggestions.length - 1) {
+              if (selectedSuggestionIndex < filteredSuggestions.length - 1) {
                 setSelectedSuggestionIndex(selectedSuggestionIndex + 1);
               }
               break;
             }
+            default:
           }
         }}
       />
